@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/kelindar/bitmap v1.4.1
+	github.com/kelindar/column v0.4.1
 	github.com/kelindar/intmap v1.1.0
 	github.com/kelindar/iostream v1.3.0
 	github.com/kelindar/simd v1.1.2
@@ -26,3 +27,5 @@ require (
 	golang.org/x/time v0.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace ggithub.com/kelindar/column => github.com/roihe/column v0.4.1
