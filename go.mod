@@ -1,4 +1,4 @@
-module github.com/kelindar/column
+module github.com/roihe/column
 
 go 1.19
 
