@@ -365,7 +365,28 @@ func (c *Collection) Query(fn func(txn *Txn) error) error {
 
 	// Now that the iteration has finished, we can range over the pending action
 	// queue and apply all of the actions that were requested by the Selector.
-	txn.commit()
+	txn.commit(true)
+	c.txns.release(txn)
+	return nil
+}
+
+// Query creates a transaction which allows for filtering and iteration over the
+// columns in this collection. It also allows for individual rows to be modified or
+// deleted during iteration (range), but the actual operations will be queued and
+// executed after the iteration.
+func (c *Collection) QueryNoLog(fn func(txn *Txn) error) error {
+	txn := c.txns.acquire(c)
+
+	// Execute the query and keep the error for later
+	if err := fn(txn); err != nil {
+		txn.rollback()
+		c.txns.release(txn)
+		return err
+	}
+
+	// Now that the iteration has finished, we can range over the pending action
+	// queue and apply all of the actions that were requested by the Selector.
+	txn.commit(false)
 	c.txns.release(txn)
 	return nil
 }

@@ -36,11 +36,42 @@ func (c *Collection) Replay(change commit.Commit) error {
 	})
 }
 
+// Replay replays a commit on a collection, applying the changes.
+func (c *Collection) ReplayNoLog(change commit.Commit) error {
+	return c.QueryNoLog(func(txn *Txn) error {
+		txn.dirty.Set(uint32(change.Chunk))
+		for i := range change.Updates {
+			if !change.Updates[i].IsEmpty() {
+				txn.updates = append(txn.updates, change.Updates[i])
+			}
+		}
+		return nil
+	})
+}
+
 // --------------------------- Snapshotting ---------------------------
 
 // Restore restores the collection from the underlying snapshot reader. This operation
 // should be called before any of transactions, right after initialization.
 func (c *Collection) Restore(snapshot io.Reader) error {
+	commits, err := c.readState(s2.NewReader(snapshot))
+	if err != nil {
+		return err
+	}
+
+	// Reconcile the pending commit log
+	return commit.Open(snapshot).Range(func(commit commit.Commit) error {
+		lastCommit := commits[commit.Chunk]
+		if commit.ID > lastCommit {
+			return c.Replay(commit)
+		}
+		return nil
+	})
+}
+
+// Restore restores the collection from the underlying snapshot reader. This operation
+// should be called before any of transactions, right after initialization.
+func (c *Collection) RestoreNoLog(snapshot io.Reader) error {
 	commits, err := c.readState(s2.NewReader(snapshot))
 	if err != nil {
 		return err

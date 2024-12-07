@@ -509,7 +509,7 @@ func (txn *Txn) rollback() {
 // the collection. This operation is can be called several times for a transaction
 // in order to perform partial commits. If there's no pending updates/deletes, this
 // operation will result in a no-op.
-func (txn *Txn) commit() {
+func (txn *Txn) commit(doLog bool) {
 	defer txn.reset()
 
 	// Mark the dirty chunks from the updates
@@ -546,7 +546,7 @@ func (txn *Txn) commit() {
 			})
 		}
 
-		if txn.logger != nil {
+		if txn.logger != nil && doLog {
 			txn.logger.Append(commit.Commit{
 				ID:      commitID,
 				Chunk:   chunk,
