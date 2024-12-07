@@ -28,4 +28,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace ggithub.com/kelindar/column => github.com/roihe/column v0.4.1
+replace ggithub.com/kelindar/column => github.com/roihe/column v0.4.1-roihe
