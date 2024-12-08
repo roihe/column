@@ -7,8 +7,6 @@ github.com/kelindar/async v1.1.0 h1:uCO6Wn7kuhmRoG9z26+onU2+MZ7vgscRMlFUIAjyPpo=
 github.com/kelindar/async v1.1.0/go.mod h1:bJRlwaRiqdHi+4dpVDNHdwgyRyk6TxpA21fByLf7hIY=
 github.com/kelindar/bitmap v1.4.1 h1:Ih0BWMYXkkZxPMU536DsQKRhdvqFl7tuNjImfLJWC6E=
 github.com/kelindar/bitmap v1.4.1/go.mod h1:4QyD+TDbfgy8oYB9oC4JzqfudYCYIjhbSP7iLraP+28=
-github.com/kelindar/column v0.4.1 h1:eonRwgTe3EEFdrBWSNnWyXYiy5/JgMzfNoH8AHkMpng=
-github.com/kelindar/column v0.4.1/go.mod h1:sZbenXtC3tNtfTRc3uifH8Z5TOn4kvDXA0yAdmyjnjs=
 github.com/kelindar/intmap v1.1.0 h1:S+YEDvw5FQus5UJDEG+xsLp8il3BTYqBMkkuVVZPMH8=
 github.com/kelindar/intmap v1.1.0/go.mod h1:tDanawPWq1B0HC+X3W8Z6IKNrJqxjruy6CdyTlf6Nic=
 github.com/kelindar/iostream v1.3.0 h1:Bz2qQabipZlF1XCk64bnxsGLete+iHtayGPeWVpbwbo=
@@ -25,6 +23,8 @@ github.com/klauspost/cpuid/v2 v2.2.5 h1:0E5MSMDEoAulmXNFquVs//DdoomxaoTY1kUhbc/q
 github.com/klauspost/cpuid/v2 v2.2.5/go.mod h1:Lcz8mBdAVJIBVzewtcLocK12l3Y+JytZYpaMropDUws=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/roihe/column v0.4.1-roihe h1:dHn48D1VXbxQ5rbhIKCeB5iy4kTNFiE9+QxZ/9MQeBI=
+github.com/roihe/column v0.4.1-roihe/go.mod h1:cOKHGfItO91qqNpraDvspllNh3aJNkhsC6owNK9C/v8=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
