@@ -29,3 +29,5 @@ require (
 )
 
 replace github.com/kelindar/column => github.com/roihe/column v0.4.1-roihe
+
+replace github.com/kelindar/column/commit => github.com/roihe/column/commit v0.4.1-roihe
