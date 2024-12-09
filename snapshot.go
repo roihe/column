@@ -72,7 +72,7 @@ func (c *Collection) Restore(snapshot io.Reader) error {
 // Restore restores the collection from the underlying snapshot reader. This operation
 // should be called before any of transactions, right after initialization.
 func (c *Collection) RestoreNoLog(snapshot io.Reader) error {
-	commits, err := c.readState(s2.NewReader(snapshot))
+	commits, err := c.readStateNoLog(s2.NewReader(snapshot))
 	if err != nil {
 		return err
 	}
@@ -213,6 +213,52 @@ func (c *Collection) readState(src io.Reader) (map[commit.Chunk]uint64, error) {
 	// Read each chunk
 	return commits, r.ReadRange(func(chunk int, r *iostream.Reader) error {
 		return c.Query(func(txn *Txn) error {
+			txn.dirty.Set(uint32(chunk))
+
+			// Read the last written commit ID for the chunk
+			if commits[commit.Chunk(chunk)], err = r.ReadUvarint(); err != nil {
+				return err
+			}
+
+			for i := uint64(0); i < columns; i++ {
+				buffer := txn.owner.txns.acquirePage("")
+				_, err := buffer.ReadFrom(r)
+				switch {
+				case err == io.EOF && i < columns:
+					return errUnexpectedEOF
+				case err != nil:
+					return err
+				default:
+					txn.updates = append(txn.updates, buffer)
+				}
+			}
+
+			return nil
+		})
+	})
+}
+
+// readState reads a collection snapshotted state from the underlying reader. It
+// returns the last commit IDs for each chunk.
+func (c *Collection) readStateNoLog(src io.Reader) (map[commit.Chunk]uint64, error) {
+	r := iostream.NewReader(src)
+	commits := make(map[commit.Chunk]uint64)
+
+	// Read the version and make sure it matches
+	version, err := r.ReadUvarint()
+	if err != nil || version != 0x1 {
+		return nil, fmt.Errorf("column: unable to restore (version %d) %v", version, err)
+	}
+
+	// Read the number of columns
+	columns, err := r.ReadUvarint()
+	if err != nil {
+		return nil, err
+	}
+
+	// Read each chunk
+	return commits, r.ReadRange(func(chunk int, r *iostream.Reader) error {
+		return c.QueryNoLog(func(txn *Txn) error {
 			txn.dirty.Set(uint32(chunk))
 
 			// Read the last written commit ID for the chunk
