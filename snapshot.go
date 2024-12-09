@@ -69,7 +69,7 @@ func (c *Collection) Restore(snapshot io.Reader) error {
 	})
 }
 
-// Restore restores the collection from the underlying snapshot reader. This operation
+// RestoreNoLog restores the collection from the underlying snapshot reader. This operation
 // should be called before any of transactions, right after initialization.
 func (c *Collection) RestoreNoLog(snapshot io.Reader) error {
 	commits, err := c.readStateNoLog(s2.NewReader(snapshot))
