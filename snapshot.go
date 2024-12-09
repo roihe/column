@@ -81,7 +81,7 @@ func (c *Collection) RestoreNoLog(snapshot io.Reader) error {
 	return commit.Open(snapshot).Range(func(commit commit.Commit) error {
 		lastCommit := commits[commit.Chunk]
 		if commit.ID > lastCommit {
-			return c.Replay(commit)
+			return c.ReplayNoLog(commit)
 		}
 		return nil
 	})
