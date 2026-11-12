@@ -5,12 +5,13 @@ package column
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 	"sync"
 	"testing"
 
-	"github.com/roihe/column/commit"
 	"github.com/kelindar/xxrand"
+	"github.com/roihe/column/commit"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -1152,4 +1153,37 @@ func TestSetManyErr(t *testing.T) {
 		})
 		assert.Error(t, err)
 	})
+}
+
+// TestRollbackFreesInsertedRows checks that the rows inserted by a failed
+// transaction are removed again.
+func TestRollbackFreesInsertedRows(t *testing.T) {
+	c := NewCollection()
+	assert.NoError(t, c.CreateColumn("name", ForString()))
+	_, err := c.Insert(func(r Row) error {
+		r.SetString("name", "kept")
+		return nil
+	})
+	assert.NoError(t, err)
+
+	assert.Error(t, c.Query(func(txn *Txn) error {
+		for i := 0; i < 3; i++ {
+			if _, err := txn.Insert(func(r Row) error {
+				r.SetString("name", "rolled back")
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return io.ErrUnexpectedEOF
+	}))
+	assert.Equal(t, 1, c.Count())
+
+	// the freed indexes are reused
+	_, err = c.Insert(func(r Row) error {
+		r.SetString("name", "new")
+		return nil
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, 2, c.Count())
 }

@@ -504,7 +504,25 @@ func (txn *Txn) DeleteKey(key string) error {
 // the pending updates/deletes. This operation can be called several times for
 // a transaction in order to perform partial rollbacks.
 func (txn *Txn) rollback() {
+	// Insert reserves the index in the fill list immediately, so the indexes
+	// inserted by this transaction have to be freed again.
+	var inserted []uint32
+	if markers, ok := txn.findMarkers(); ok {
+		markers.RangeChunks(func(chunk commit.Chunk) {
+			txn.reader.Range(markers, chunk, func(r *commit.Reader) {
+				for r.Next() {
+					if r.Type == commit.Insert {
+						inserted = append(inserted, r.Index())
+					}
+				}
+			})
+		})
+	}
+
 	txn.owner.lock.Lock()
+	for _, idx := range inserted {
+		txn.owner.fill.Remove(idx)
+	}
 	atomic.StoreUint64(&txn.owner.count, uint64(txn.owner.fill.Count()))
 	txn.owner.lock.Unlock()
 
