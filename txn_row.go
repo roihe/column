@@ -7,7 +7,7 @@ import (
 	"encoding"
 	"fmt"
 
-	"github.com/kelindar/column/commit"
+	"github.com/roihe/column/commit"
 )
 
 // Row represents a cursor at a particular row offest in the transaction.

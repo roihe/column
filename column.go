@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/kelindar/bitmap"
-	"github.com/kelindar/column/commit"
+	"github.com/roihe/column/commit"
 )
 
 // columnType represents a type of a column.

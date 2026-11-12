@@ -17,7 +17,7 @@ import (
 	"testing"
 
 	"github.com/kelindar/async"
-	"github.com/kelindar/column/commit"
+	"github.com/roihe/column/commit"
 	"github.com/klauspost/compress/s2"
 	"github.com/stretchr/testify/assert"
 )
@@ -107,7 +107,7 @@ func runReplication(t *testing.T, updates, inserts, concurrency int) {
 			})
 		}
 
-		work := make(chan async.Task)
+		work := make(chan async.Task[any])
 		pool := async.Consume(context.Background(), 50, work)
 		defer pool.Cancel()
 
@@ -115,7 +115,7 @@ func runReplication(t *testing.T, updates, inserts, concurrency int) {
 		var wg sync.WaitGroup
 		wg.Add(updates)
 		for i := 0; i < updates; i++ {
-			work <- async.NewTask(func(ctx context.Context) (interface{}, error) {
+			work <- async.NewTask[any](func(ctx context.Context) (interface{}, error) {
 				defer wg.Done()
 
 				// Randomly update a column

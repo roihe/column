@@ -9,7 +9,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/kelindar/column/commit"
+	"github.com/roihe/column/commit"
 	"github.com/kelindar/xxrand"
 	"github.com/stretchr/testify/assert"
 )

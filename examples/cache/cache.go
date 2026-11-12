@@ -4,7 +4,7 @@
 package main
 
 import (
-	"github.com/kelindar/column"
+	"github.com/roihe/column"
 )
 
 // Cache represents a key-value store

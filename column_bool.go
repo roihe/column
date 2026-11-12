@@ -5,7 +5,7 @@ package column
 
 import (
 	"github.com/kelindar/bitmap"
-	"github.com/kelindar/column/commit"
+	"github.com/roihe/column/commit"
 )
 
 // columnBool represents a boolean column

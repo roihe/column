@@ -12,8 +12,8 @@ import (
 
 	"github.com/dustin/go-humanize"
 	"github.com/kelindar/async"
-	"github.com/kelindar/column"
-	"github.com/kelindar/column/fixtures"
+	"github.com/roihe/column"
+	"github.com/roihe/column/fixtures"
 	"github.com/kelindar/xxrand"
 )
 
@@ -63,7 +63,7 @@ func runBenchmark(name string, fn func(bool) (int, int)) {
 
 		// Iterate over various concurrency levels
 		for _, n := range []int{1, 2, 4, 8, 16, 32, 64, 128, 256, 512} {
-			work := make(chan async.Task, n)
+			work := make(chan async.Task[any], n)
 			pool := async.Consume(context.Background(), n, work)
 
 			var reads, writes int64
@@ -71,7 +71,7 @@ func runBenchmark(name string, fn func(bool) (int, int)) {
 			start := time.Now()
 			for time.Since(start) < time.Second {
 				wg.Add(1)
-				work <- async.NewTask(func(ctx context.Context) (interface{}, error) {
+				work <- async.NewTask[any](func(ctx context.Context) (interface{}, error) {
 					defer wg.Done()
 
 					r, w := fn(xxrand.Intn(100) < workload)

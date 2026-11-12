@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/kelindar/column"
+	"github.com/roihe/column"
 )
 
 // Movement represents a movement with a position and velocity

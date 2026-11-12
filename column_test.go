@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/kelindar/bitmap"
-	"github.com/kelindar/column/commit"
+	"github.com/roihe/column/commit"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -138,7 +138,7 @@ func testColumn(t *testing.T, column Column, value interface{}) {
 
 		// LoadInt64
 		i64, ok := column.LoadInt64(9)
-		assert.EqualValues(t, value, i64)
+		assert.EqualValues(t, truncated(value), i64)
 		assert.True(t, ok)
 
 		// FilterInt64
@@ -150,7 +150,7 @@ func testColumn(t *testing.T, column Column, value interface{}) {
 
 		// LoadUint64
 		u64, ok := column.LoadUint64(9)
-		assert.EqualValues(t, value, u64)
+		assert.EqualValues(t, truncated(value), u64)
 		assert.True(t, ok)
 
 		// FilterUint64
@@ -787,4 +787,17 @@ func invoke(any interface{}, name string, args ...interface{}) []reflect.Value {
 	}
 
 	return reflect.ValueOf(any).MethodByName(name).Call(inputs)
+}
+
+// truncated returns floating point values without their fraction, as
+// LoadInt64 and LoadUint64 of a float column return them.
+func truncated(value any) any {
+	switch v := value.(type) {
+	case float32:
+		return float32(int64(v))
+	case float64:
+		return float64(int64(v))
+	default:
+		return value
+	}
 }

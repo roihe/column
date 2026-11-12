@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 
 	"github.com/kelindar/bitmap"
-	"github.com/kelindar/column/commit"
+	"github.com/roihe/column/commit"
 )
 
 var (
@@ -188,7 +188,10 @@ func (txn *Txn) Union(columns ...string) *Txn {
 				if first {
 					dst.And(src)
 				} else {
-					dst.Or(src)
+					// bitmap.Or panics on an empty src with AVX-512 (bitmap v1.5.x)
+					if len(src) > 0 {
+						dst.Or(src)
+					}
 				}
 			})
 		}
@@ -230,7 +233,10 @@ func (txn *Txn) WithUnion(columns ...string) *Txn {
 
 		// for each columm, tmpMap =| colMap
 		for _, orCol := range cols {
-			tmpMap.Or(orCol.Index(chunk))
+			// bitmap.Or panics on an empty bitmap with AVX-512 (bitmap v1.5.x)
+			if colMap := orCol.Index(chunk); len(colMap) > 0 {
+				tmpMap.Or(colMap)
+			}
 		}
 
 		// indexMap =& tmpMap

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/kelindar/column"
+	"github.com/roihe/column"
 )
 
 func main() {
