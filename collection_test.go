@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kelindar/xxrand"
 	"github.com/roihe/column/commit"
 	"github.com/roihe/column/fixtures"
-	"github.com/kelindar/xxrand"
 	"github.com/stretchr/testify/assert"
 )
 

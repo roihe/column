@@ -9,8 +9,8 @@ import (
 	"sync"
 
 	"github.com/kelindar/bitmap"
-	"github.com/roihe/column/commit"
 	"github.com/kelindar/intmap"
+	"github.com/roihe/column/commit"
 	"github.com/zeebo/xxh3"
 )
 

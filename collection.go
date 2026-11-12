@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/kelindar/bitmap"
-	"github.com/roihe/column/commit"
 	"github.com/kelindar/smutex"
+	"github.com/roihe/column/commit"
 )
 
 const (

@@ -12,9 +12,9 @@ import (
 
 	"github.com/dustin/go-humanize"
 	"github.com/kelindar/async"
+	"github.com/kelindar/xxrand"
 	"github.com/roihe/column"
 	"github.com/roihe/column/fixtures"
-	"github.com/kelindar/xxrand"
 )
 
 var (
