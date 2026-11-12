@@ -29,7 +29,7 @@ type columnEnum struct {
 func makeEnum() Column {
 	return &columnEnum{
 		chunks: make(chunks[uint32], 0, 4),
-		seek:   intmap.NewSync(64, .95),
+		seek:   intmap.NewSync(64),
 		data:   make([]string, 0, 64),
 	}
 }
