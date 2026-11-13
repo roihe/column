@@ -1002,3 +1002,33 @@ func (r mockRecord) UnmarshalBinary(b []byte) error {
 	}
 	return nil
 }
+
+// TestKeyRename checks that changing the key of a row removes the previous
+// key from the index, so the row can get its previous key again.
+func TestKeyRename(t *testing.T) {
+	c := NewCollection()
+	assert.NoError(t, c.CreateColumn("key", ForKey()))
+	var idx uint32
+	assert.NoError(t, c.InsertKey("A", func(r Row) error {
+		idx = r.Index()
+		return nil
+	}))
+
+	assert.NoError(t, c.QueryAt(idx, func(r Row) error {
+		r.SetKey("Z")
+		return nil
+	}))
+	assert.Error(t, c.QueryKey("A", func(r Row) error { return nil }), "previous key must be removed")
+	assert.NoError(t, c.QueryKey("Z", func(r Row) error { return nil }))
+
+	assert.NoError(t, c.QueryAt(idx, func(r Row) error {
+		r.SetKey("A")
+		return nil
+	}))
+	assert.NoError(t, c.QueryAt(idx, func(r Row) error {
+		key, _ := r.Key()
+		assert.Equal(t, "A", key)
+		return nil
+	}))
+	assert.Error(t, c.QueryKey("Z", func(r Row) error { return nil }))
+}

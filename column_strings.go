@@ -287,9 +287,17 @@ func (c *columnKey) Apply(chunk commit.Chunk, r *commit.Reader) {
 		case commit.Put:
 			value := string(r.Bytes())
 
+			c.lock.Lock()
+			// a changed key replaces the previous key of the row in the index
+			if fill.Contains(uint32(offset)) {
+				if previous := data[offset]; previous != value {
+					if idx, ok := c.seek[previous]; ok && idx == uint32(r.Offset) {
+						delete(c.seek, previous)
+					}
+				}
+			}
 			fill[offset>>6] |= 1 << (offset & 0x3f)
 			data[offset] = value
-			c.lock.Lock()
 			c.seek[value] = uint32(r.Offset)
 			c.lock.Unlock()
 
