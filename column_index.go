@@ -181,7 +181,9 @@ type columnSortIndex struct {
 // newSortIndex creates a new bitmap index column.
 func newSortIndex(indexName, columnName string) *column {
 	byKeys := func(a, b sortIndexItem) bool {
-		return a.Key < b.Key
+		// equal keys are ordered by the record: with the key alone the btree
+		// keeps only one record per value
+		return a.Key < b.Key || (a.Key == b.Key && a.Value < b.Value)
 	}
 	return columnFor(indexName, &columnSortIndex{
 		btree:   btree.NewBTreeG(byKeys),
@@ -222,7 +224,11 @@ func (c *columnSortIndex) Apply(chunk commit.Chunk, r *commit.Reader) {
 				Value: r.Index(),
 			})
 		case commit.Delete:
-			delKey, _ := c.backMap[r.Index()]
+			delKey, exists := c.backMap[r.Index()]
+			if !exists {
+				break
+			}
+			delete(c.backMap, r.Index())
 			c.btree.Delete(sortIndexItem{
 				Key:   delKey,
 				Value: r.Index(),
